@@ -1,61 +1,51 @@
 import pygame
 from abc import ABC, abstractmethod
-from util import colored_sprite, EventHandler
+from util import EventHandler
 
-
-import math
-
-def rotate(pos, angle, axis = (0,0)):
-    angle = math.radians(angle)
-    x, y = pos
-    ax, ay = axis
-
-    # Translate so axis is the origin
-    x -= ax
-    y -= ay
-
-    # Rotate
-    cos_a = math.cos(angle)
-    sin_a = math.sin(angle)
-
-    rx = x * cos_a - y * sin_a
-    ry = x * sin_a + y * cos_a
-
-    # Translate back
-    return rx + ax, ry + ay
+events = EventHandler()
 
 class Bullet (ABC):
 
-    def __init__(self, pos, angle = 0, radius = 16, life_time = None):
-        self.pos = pos
-        self.origin = pygame.Vector2(pos)
-        self.life_time = life_time
-        self.angle = angle
-        self.elapsed = 0
-        self.radius = radius
-
-        self.sprite = colored_sprite ((255, 0, 0), (self.radius*2, self.radius*2))
-
-    def update(self, dt):
-
-        self.elapsed += dt
-        if self.life_time and self.elapsed >= self.life_time:
-                self.destroy()       
-
-        self.pos = rotate(self.move(), self.angle)+self.origin
-
-    def draw(self, screen):
-        screen.blit(self.sprite, self.pos)
+    #def __init__(self):
+    #    super().__init__()
 
     @abstractmethod
-    def move(self):
+    def update(self):
         pass
 
-    def destroy(self): # pede para deletar
-        EventHandler().notify("DestroyObj", self) # avisa o mundo que saiu da tela
 
-class sinBullet (Bullet):
+    def destroy(self): # pede para deletar
+        if self.rect.y < -50 or self.rect.y > 750:
+            #print("sumiu")
+            self.kill()
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect.center)
+
+class PlayerBullet (Bullet, pygame.sprite.Sprite):
     # exemplo, façam algo mais rebuscado
 
-    def move(self):
-        return pygame.Vector2(self.elapsed, math.sin(self.elapsed/50)*50) 
+    def __init__(self, pos):
+        super().__init__()
+        self.image = pygame.image.load("images/tiro/tiro_jogador.png").convert_alpha()
+        self.rect = self.image.get_rect(center=pos)
+        self.mask = pygame.mask.from_surface(self.image)
+
+    def update(self):
+        self.rect.y -= 6
+        self.destroy()
+
+    #def draw(self, screen):
+    #    screen.blit(self.image, self.rect.center)
+
+class EnemyBullet(Bullet, pygame.sprite.Sprite):
+    def __init__(self, pos):
+        super().__init__()
+        self.image = pygame.image.load("images/tiro/tiro_alien.png").convert_alpha()
+        self.rect = self.image.get_rect(center=pos)
+        self.mask = pygame.mask.from_surface(self.image)
+
+    def update(self):
+        self.rect.y += 6
+        self.destroy()
+
