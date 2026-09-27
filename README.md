@@ -9,3 +9,4 @@ __Trabalho 2__ consistia em fazer um jogo que utilize o sistema de grade incluso
 
 __Trabalho 3__ consistia em fazer um jogo onde um personagem atirava em inimigos, utilizando de estados e eventos para controlar o funcionamento do jogo. Eu fiz um jogo semelhante a Space Invaders.
 
+__Trabalho 4__ consistia em fazer um jogo com física usando uma bolinha. Usando a detecção de colisões (neste caso utilizei de máscaras) para fazer efeitos que não mudem a trajetória da bolinha e outros que parem/reflitam o movimento da bolinha.
